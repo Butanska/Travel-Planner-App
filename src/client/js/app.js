@@ -1,9 +1,9 @@
 function formSubmit(){
 
   /* Global Variables */
-  const baseURL = 'http://api.openweathermap.org/data/2.5/weather?zip='
+  const baseURL = 'http://api.geonames.org/searchJSON?q='
   
-  const apiKEY = '881e57e87e8fd3bd58439043d5f45f96';
+  const apiKEY = '&username=romib';
 
   //added 'http://localhost:5000' to the path
   const addLocationPath = 'http://localhost:5000/add'
@@ -14,13 +14,13 @@ function formSubmit(){
   let month = m+1;
   let newDate = d.getDate()+'.'+month+'.'+ d.getFullYear();
 
-  //Write an async function that uses fetch() to make a GET request to the OpenWeatherMap API
-  const getWeather = async (baseURL, zip, key)=>{
-    const response = await fetch(baseURL+zip+',us&units=metric&appid='+key);
+  //Write an async function that uses fetch() to make a GET request to the Geonames API
+  const getWeather = async (baseURL, city, key)=>{
+    const response = await fetch(baseURL+city+key);
     try{
-      const weatherData = await response.json();
-      console.log(weatherData);
-      const temperature = weatherData.main.temp;
+      const geonamesData = await response.json();
+      console.log(geonamesData);
+      const temperature = geonamesData[1].countryName;
       return temperature
     } catch(error){
       console.log('error', error);
@@ -35,7 +35,7 @@ function formSubmit(){
     const feeling = document.getElementById('feelings').value;
 
     // Call your async GET request with parameters
-    getWeather(baseURL, document.getElementById('zip').value, apiKEY)
+    getWeather(baseURL, document.getElementById('city').value, apiKEY)
       .then(function(temperature){
         postData(addLocationPath, {temperature: temperature, date: newDate, userResponse: feeling})
         //Update UI
@@ -80,7 +80,5 @@ function formSubmit(){
   }
 }
 
-
-// alert('I exist!')
 export { formSubmit }
 
