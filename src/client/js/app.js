@@ -20,7 +20,7 @@ function formSubmit(){
     try{
       const geonamesData = await response.json();
       console.log(geonamesData);
-      const temperature = geonamesData[1].countryName;
+      const temperature = geonamesData.geonames[0].countryName;
       return temperature
     } catch(error){
       console.log('error', error);
