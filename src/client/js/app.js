@@ -35,11 +35,18 @@ function formSubmit(){
   function performAction(e){
     // Select the value of the user response to include in POST
     const arrivalDay = document.getElementById('arrivalDate').value;
+    const entry = new Date(arrivalDay);
+    const time = entry.getTime();
+    // const arrivalDay = document.getElementById('arrivalDate').value;
+    // const inputArrivalDay = (new Date(arrivalDay)).getTime();
+    const inputToday = (new Date()).getTime();
+    const differenceMiliSec = Math.abs(time - inputToday);
+    const difference = Math.ceil(differenceMiliSec/(1000*60*60*24));
 
     // Call your async GET request with parameters
     getCoordinates(baseURL, document.getElementById('city').value, apiKEY)
       .then(function(country){
-        postData(addLocationPath, {country: country, date: newDate, userResponse: arrivalDay})
+        postData(addLocationPath, {country: country, date: newDate, userResponse: arrivalDay, daysLeft: difference})
         //Update UI
         updateUI();
       })
@@ -77,10 +84,12 @@ function formSubmit(){
       document.getElementById('date').innerHTML = 'Today is '+ lastEntry.date;
       document.getElementById('country').innerHTML = 'You are going to '+city+', '+lastEntry.country;
       document.getElementById('content').innerHTML = 'Your departure date is '+lastEntry.userResponse;
+      document.getElementById('countdown').innerHTML = 'There are '+lastEntry.daysLeft+' days left until your trip';
     }catch(error){
       console.log('error', error);
     };
   }
+
 }
 
 export { formSubmit }
