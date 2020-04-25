@@ -21,16 +21,19 @@
     <input type="text" id="city" placeholder="Eg. Rome, Tokyo, Seoul, New York" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter destination city here'"  >
   </div>
   <div class ="holder feel">
-    <label for="feelings">When do you expect to arrive?</label>
-    <textarea class= "myInput" id="feelings" placeholder="Pick a date" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your arrival date here' " rows="9" cols="50"></textarea><br>
+    <label for="arrivalDate">When do you expect to arrive?</label>
+    <input type="date" class= "myInput" id="arrivalDate" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your arrival date here' ">
+    <!-- <textarea class= "myInput" id="arrivalDate" placeholder="Pick a date" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your arrival date here' " rows="9" cols="50"></textarea><br> -->
     <button id="generate" class="btn" type = "submit"> Submit </button><br>
   </div>
   <div id="responseHolder" class ="holder entry">
     <div class = "title">Your next trip</div>
    <div id = "entryHolder">
     <div id = "date"></div> 
-    <div id = "temp"></div>
+    <div id = "country"></div>
     <div id = "content"></div>
+    <div id = "temp"></div>
+    <div id = "countdown"></div>
   </div>
   </div>
   </div>
