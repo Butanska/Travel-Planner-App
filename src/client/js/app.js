@@ -22,8 +22,9 @@ function formSubmit(){
     try{
       const geonamesArray = await response.json();
       console.log(geonamesArray);
-      const country = geonamesArray.geonames[0].countryName;
-      return country
+      // const country = geonamesArray.geonames[0].countryName;
+      const geonamesData = geonamesArray.geonames[0];
+      return geonamesData
     } catch(error){
       console.log('error', error);
     }
@@ -45,8 +46,15 @@ function formSubmit(){
 
     // Call your async GET request with parameters
     getCoordinates(baseURL, document.getElementById('city').value, apiKEY)
-      .then(function(country){
-        postData(addLocationPath, {country: country, date: newDate, userResponse: arrivalDay, daysLeft: difference})
+      .then(function(geonamesData){
+        postData(addLocationPath, {
+          country: geonamesData.countryName, 
+          date: newDate, 
+          userResponse: arrivalDay, 
+          daysLeft: difference,
+          longitude: geonamesData.lng,
+          latitude: geonamesData.lat
+        })
         //Update UI
         updateUI();
       })
