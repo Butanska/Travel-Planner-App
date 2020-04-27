@@ -4,7 +4,7 @@ function formSubmit(){
 
   //GeoNames API
   const baseURL = 'http://api.geonames.org/searchJSON?q='
-    const apiKEY = '&username=romib';
+  const apiKEY = '&username=romib';
 
   //Path to location where data is added 
   //(added 'http://localhost:5000' to the path)
@@ -38,8 +38,6 @@ function formSubmit(){
     const arrivalDay = document.getElementById('arrivalDate').value;
     const entry = new Date(arrivalDay);
     const time = entry.getTime();
-    // const arrivalDay = document.getElementById('arrivalDate').value;
-    // const inputArrivalDay = (new Date(arrivalDay)).getTime();
     const inputToday = (new Date()).getTime();
     const differenceMiliSec = Math.abs(time - inputToday);
     const difference = Math.ceil(differenceMiliSec/(1000*60*60*24));
@@ -93,6 +91,8 @@ function formSubmit(){
       document.getElementById('country').innerHTML = 'You are going to '+city+', '+lastEntry.country;
       document.getElementById('content').innerHTML = 'Your departure date is '+lastEntry.userResponse;
       document.getElementById('countdown').innerHTML = 'There are '+lastEntry.daysLeft+' days left until your trip';
+      document.getElementById('temp').innerHTML = 'The average temperature in the next 16 days is expected to be '+lastEntry.temp+'&deg;C';
+
     }catch(error){
       console.log('error', error);
     };
