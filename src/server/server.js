@@ -84,8 +84,8 @@ function addTripData(req, res){
     .then(function (weatherbitData) {
       // return (weatherbitData);
       newTravelData.temp = weatherbitData.data[0].temp;
-      projectData.push(newTravelData)
-      res.send(projectData);
+      // projectData.push(newTravelData)
+      // res.send(projectData);
     });
   
   projectData.push(newTravelData)
