@@ -86,7 +86,6 @@ function formSubmit(){
       const logsNumber = allData.length;
       const lastEntry = allData[logsNumber-1];
       const city = document.getElementById('city').value;
-      // const country = lastEntry.country;
       document.getElementById('date').innerHTML = 'Today is '+ lastEntry.date;
       document.getElementById('country').innerHTML = 'You are going to '+city+', '+lastEntry.country;
       document.getElementById('content').innerHTML = 'Your departure date is '+lastEntry.userResponse;

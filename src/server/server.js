@@ -79,18 +79,35 @@ function addTripData(req, res){
   newTravelData.longitude = req.body.longitude;
   newTravelData.latitude = req.body.latitude;
 
-  // Call your async GET request to the Weatherbit API with parameters
-  weatherbit(newTravelData.longitude, newTravelData.latitude)
-    .then(function (weatherbitData) {
-      // return (weatherbitData);
-      newTravelData.temp = weatherbitData.data[0].temp;
-      // projectData.push(newTravelData)
-      // res.send(projectData);
+  const weatherProm = new Promise((resolve, reject) => {
+    weatherbit(newTravelData.longitude, newTravelData.latitude)
+    .then(function (response) {
+      resolve(response);
     });
+  });
+
+  Promise.all([weatherProm])
+  .then(function (results) {
+    const weatherForecast = results[0];
+    newTravelData.temp = weatherForecast.data[0].temp;
+    projectData.push(newTravelData);
+    res.send(projectData);
+    console.log(projectData);
+  });
+
+
+  // Call your async GET request to the Weatherbit API with parameters
+  // weatherbit(newTravelData.longitude, newTravelData.latitude)
+  //   .then(function (weatherbitData) {
+  //     // return (weatherbitData);
+  //     newTravelData.temp = weatherbitData.data[0].temp;
+  //     // projectData.push(newTravelData)
+  //     // res.send(projectData);
+  //   });
   
-  projectData.push(newTravelData)
-  res.send(projectData);
-  console.log(projectData);
+  // projectData.push(newTravelData)
+  // res.send(projectData);
+  // console.log(projectData);
 
   // projectData.push(req.body);
   // res.send(projectData); 
