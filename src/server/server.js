@@ -28,11 +28,11 @@ app.use(cors());
 // Initialize the main project folder
 app.use(express.static('dist'));
 
-console.log(__dirname)
+console.log(__dirname);
 
 app.get('/', function (req, res) {
   res.sendFile('dist/index.html')
-})
+});
 
 // Setup Server
 const port =5000;
@@ -50,16 +50,39 @@ function getProjectData (req,res) {
   // console.log(projectData)
 };
 
+//GeoNames API
+const baseURL = 'http://api.geonames.org/searchJSON?q=';
+const apiKEY = '&username=romib';
+
 //Weatherbit API
 const weatherbitURL = 'https://api.weatherbit.io/v2.0/forecast/daily?';
 const weatherbitKey = process.env.WEATHERBIT_API_KEY;
 
+//Write an async function that uses fetch() to make a GET request to the Geonames API
+const getCoordinates = async () => {
+  let city = projectData[projectData.length-1].city;
+  const response = await fetch(baseURL+city+apiKEY);
+  try{
+    const geonamesArray = await response.json();
+    console.log(geonamesArray);
+    const geonamesData = geonamesArray.geonames[0];
+    projectData[projectData.length-1].latitude = geonamesData.lat;
+    projectData[projectData.length-1].longitude = geonamesData.lng;
+    projectData[projectData.length-1].country = geonamesData.countryName;
+    return geonamesData
+  } catch(error){
+    console.log('error', error);
+  }
+};
+
 //Write an async function that uses fetch() to make a GET request to the Weatherbit API
-const weatherbit = async function (longitude, latitude) {
-  const weatherRequest = `${weatherbitURL}lat=${latitude}&lon=${longitude}&key=${weatherbitKey}`;
+const weatherbit = async function () {
+  const weatherRequest = `${weatherbitURL}lat=${projectData[projectData.length-1].latitude}&lon=${projectData[projectData.length-1].longitude}&key=${weatherbitKey}`;
   const response = await fetch(weatherRequest);
     try{
       const weatherObject = await response.json();
+      console.log(JSON.stringify(weatherObject));
+      projectData[projectData.length-1].temp = weatherObject.data[0].temp;
       return weatherObject
     } catch(error){
       console.log('error', error);
@@ -69,31 +92,44 @@ const weatherbit = async function (longitude, latitude) {
 //Adding a POST route that adds incoming data to projectData
 app.post('/add', addTripData);
 
-function addTripData(req, res){
+async function addTripData(req, res){
   // const requestBody = req.body;
   const newTravelData = {};
-  newTravelData.country = req.body.country;
   newTravelData.date = req.body.date;
   newTravelData.userResponse = req.body.userResponse;
   newTravelData.daysLeft = req.body.daysLeft;
-  newTravelData.longitude = req.body.longitude;
-  newTravelData.latitude = req.body.latitude;
+  newTravelData.city = req.body.city;
+  // newTravelData.longitude = req.body.longitude;
+  // newTravelData.latitude = req.body.latitude;
+  // newTravelData.country = req.body.country;
 
-  const weatherProm = new Promise((resolve, reject) => {
-    weatherbit(newTravelData.longitude, newTravelData.latitude)
-    .then(function (response) {
-      resolve(response);
-    });
-  });
+  projectData.push(newTravelData);
 
-  Promise.all([weatherProm])
-  .then(function (results) {
-    const weatherForecast = results[0];
-    newTravelData.temp = weatherForecast.data[0].temp;
-    projectData.push(newTravelData);
-    res.send(projectData);
-    console.log(projectData);
-  });
+  await getCoordinates();
+
+  await weatherbit();
+  
+  res.send(projectData);
+  console.log(projectData);
+
+
+  // const weatherProm = new Promise((resolve, reject) => {
+  //   weatherbit(newTravelData.longitude, newTravelData.latitude)
+  //   .then(function (response) {
+  //     resolve(response);
+  //   });
+  // });
+
+ 
+
+  // Promise.all([weatherProm])
+  // .then(function (results) {
+  //   const weatherForecast = results[0];
+  //   newTravelData.temp = weatherForecast.data[0].temp;
+  //   projectData.push(newTravelData);
+  //   res.send(projectData);
+  //   console.log(projectData);
+  // });
 
 
   // Call your async GET request to the Weatherbit API with parameters
