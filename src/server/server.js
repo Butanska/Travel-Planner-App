@@ -52,7 +52,7 @@ function getProjectData (req,res) {
 
 //GeoNames API
 const baseURL = 'http://api.geonames.org/searchJSON?q=';
-const apiKEY = '&username=romib';
+const apiKEY = process.env.apiKEY;
 
 //Weatherbit API
 const weatherbitURL = 'https://api.weatherbit.io/v2.0/forecast/daily?';
@@ -76,7 +76,7 @@ const getCoordinates = async () => {
 };
 
 //Write an async function that uses fetch() to make a GET request to the Weatherbit API
-const weatherbit = async function () {
+const weatherbit = async () => {
   const weatherRequest = `${weatherbitURL}lat=${projectData[projectData.length-1].latitude}&lon=${projectData[projectData.length-1].longitude}&key=${weatherbitKey}`;
   const response = await fetch(weatherRequest);
     try{
@@ -99,9 +99,6 @@ async function addTripData(req, res){
   newTravelData.userResponse = req.body.userResponse;
   newTravelData.daysLeft = req.body.daysLeft;
   newTravelData.city = req.body.city;
-  // newTravelData.longitude = req.body.longitude;
-  // newTravelData.latitude = req.body.latitude;
-  // newTravelData.country = req.body.country;
 
   projectData.push(newTravelData);
 
@@ -111,41 +108,4 @@ async function addTripData(req, res){
   
   res.send(projectData);
   console.log(projectData);
-
-
-  // const weatherProm = new Promise((resolve, reject) => {
-  //   weatherbit(newTravelData.longitude, newTravelData.latitude)
-  //   .then(function (response) {
-  //     resolve(response);
-  //   });
-  // });
-
- 
-
-  // Promise.all([weatherProm])
-  // .then(function (results) {
-  //   const weatherForecast = results[0];
-  //   newTravelData.temp = weatherForecast.data[0].temp;
-  //   projectData.push(newTravelData);
-  //   res.send(projectData);
-  //   console.log(projectData);
-  // });
-
-
-  // Call your async GET request to the Weatherbit API with parameters
-  // weatherbit(newTravelData.longitude, newTravelData.latitude)
-  //   .then(function (weatherbitData) {
-  //     // return (weatherbitData);
-  //     newTravelData.temp = weatherbitData.data[0].temp;
-  //     // projectData.push(newTravelData)
-  //     // res.send(projectData);
-  //   });
-  
-  // projectData.push(newTravelData)
-  // res.send(projectData);
-  // console.log(projectData);
-
-  // projectData.push(req.body);
-  // res.send(projectData); 
-  // console.log(projectData)
 };

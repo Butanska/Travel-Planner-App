@@ -1,13 +1,6 @@
 function formSubmit(){
 
-  /* Global Variables */
-
-  // //GeoNames API
-  // const baseURL = 'http://api.geonames.org/searchJSON?q=';
-  // const apiKEY = '&username=romib';
-
   //Path to location where data is added 
-  //(added 'http://localhost:5000' to the path)
   const addLocationPath = 'http://localhost:5000/add'
 
   // Create a new date instance dynamically with JS
@@ -16,24 +9,11 @@ function formSubmit(){
   let month = m+1;
   let newDate = today.getDate()+'.'+month+'.'+ today.getFullYear();
 
-  // //Write an async function that uses fetch() to make a GET request to the Geonames API
-  // const getCoordinates = async (baseURL, city, key)=>{
-  //   const response = await fetch(baseURL+city+key);
-  //   try{
-  //     const geonamesArray = await response.json();
-  //     console.log(geonamesArray);
-  //     // const country = geonamesArray.geonames[0].countryName;
-  //     const geonamesData = geonamesArray.geonames[0];
-  //     return geonamesData
-  //   } catch(error){
-  //     console.log('error', error);
-  //   }
-  // }
-
   //Create an event listener for the element with the id: generate, with a callback function to execute when it is clicked
   document.getElementById('generate').addEventListener('click', performAction);
 
   function performAction(e){
+    e.preventDefault();
     // Select the value of the user response to include in POST
     const arrivalDay = document.getElementById('arrivalDate').value;
     const entry = new Date(arrivalDay);
@@ -44,32 +24,14 @@ function formSubmit(){
     const city = document.getElementById('city').value;
 
     postData(addLocationPath, {
-      // country: geonamesData.countryName, 
       date: newDate, 
       userResponse: arrivalDay, 
       daysLeft: difference,
       city: city
-      // longitude: geonamesData.lng,
-      // latitude: geonamesData.lat
     });
 
     updateUI();
 
-
-    // // Call your async GET request with parameters
-    // getCoordinates(baseURL, document.getElementById('city').value, apiKEY)
-    //   .then(function(geonamesData){
-    //     postData(addLocationPath, {
-    //       country: geonamesData.countryName, 
-    //       date: newDate, 
-    //       userResponse: arrivalDay, 
-    //       daysLeft: difference,
-    //       longitude: geonamesData.lng,
-    //       latitude: geonamesData.lat
-    //     })
-    //     //Update UI
-    //     updateUI();
-    //   })
   };
 
   //Write an async function to make a POST request to add the API data, user input and date
@@ -83,7 +45,7 @@ function formSubmit(){
     body: JSON.stringify(data),       
   });
     try {
-      const data = await fetch('/all')
+      const data = await fetch('http://localhost:5000/all')
       try {
         const newData = await data.json();
         return newData;
