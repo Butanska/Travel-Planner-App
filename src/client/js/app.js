@@ -30,13 +30,13 @@ function formSubmit(){
       city: city
     });
 
-    updateUI();
-
   };
 
   //Write an async function to make a POST request to add the API data, user input and date
   const postData = async ( url = '', data = {})=>{
-    const response = await fetch(url = 'http://localhost:5000/add', {
+    const response = await fetch(url,
+    // url = 'http://localhost:5000/add',
+    {
     method: 'POST', 
     credentials: 'same-origin', 
     headers: {
@@ -48,12 +48,11 @@ function formSubmit(){
       const data = await fetch('http://localhost:5000/all')
       try {
         const newData = await data.json();
+        updateUI();
         return newData;
       } catch (error) {
         console.log("error 1", error);
       }
-      // const newData = await response.json();
-      // return newData;
     }catch(error) {
     console.log("error 1", error);
     }
