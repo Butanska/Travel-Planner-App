@@ -25,7 +25,7 @@ function formSubmit(){
 
     postData(addLocationPath, {
       date: newDate, 
-      userResponse: arrivalDay, 
+      arrival: arrivalDay, 
       daysLeft: difference,
       city: city
     });
@@ -63,16 +63,23 @@ function formSubmit(){
   const updateUI = async()=>{
     //Retrieve data from the app endpoint
     const request = await fetch('http://localhost:5000/all')
+
     try{
       const allData = await request.json();
       console.log(allData);
       const logsNumber = allData.length;
       const lastEntry = allData[logsNumber-1];
       const city = document.getElementById('city').value;
-      document.getElementById('date').innerHTML = 'Today is '+ lastEntry.date;
+
+      document.getElementById('date').innerHTML = 'Today is '+ newDate;
+      // lastEntry.date;
+
       document.getElementById('country').innerHTML = 'You are going to '+city+', '+lastEntry.country;
-      document.getElementById('content').innerHTML = 'Your departure date is '+lastEntry.userResponse;
+
+      document.getElementById('content').innerHTML = 'Your arrival date is '+lastEntry.arrival;
+
       document.getElementById('countdown').innerHTML = 'There are '+lastEntry.daysLeft+' days left until your trip';
+
       document.getElementById('temp').innerHTML = 'The average temperature in the next 16 days is expected to be '+lastEntry.temp+'&deg;C';
     }
     catch(error){
