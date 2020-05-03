@@ -79,7 +79,7 @@ function formSubmit(){
 
       document.getElementById('countdown').innerHTML = 'There are '+lastEntry.daysLeft+' days left until your trip';
 
-      document.getElementById('temp').innerHTML = 'The average temperature in the next 16 days is expected to be '+lastEntry.temp+'&deg;C';
+      document.getElementById('temp').innerHTML = 'The typical weather for then is '+lastEntry.temp+'&deg;C';
     }
     catch(error){
       console.log('error', error);

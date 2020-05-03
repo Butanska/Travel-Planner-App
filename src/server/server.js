@@ -59,12 +59,17 @@ const apiKEY = process.env.apiKEY;
 
 //Weatherbit API
 const weatherbitURL = 'https://api.weatherbit.io/v2.0/forecast/daily?';
+const weatherbitURLhist = 'http://api.weatherbit.io/v2.0/history/daily?'
 const weatherbitKey = process.env.WEATHERBIT_API_KEY;
+
+//Pixabay API
+const pixabayURL = 'https://pixabay.com/api/?'
+const pixabay_API_KEY = process.env.pixabay_API_KEY;
+
 
 //Write an async function that uses fetch() to make a GET request to the Geonames API
 const getCoordinates = async () => {
   let city = clientData[clientData.length-1].city;
-  // let city = projectData[projectData.length-1].city;
   const response = await fetch(baseURL+city+apiKEY);
   try{
     const geonamesArray = await response.json();
@@ -72,9 +77,6 @@ const getCoordinates = async () => {
     clientData[clientData.length-1].latitude = geonamesData.lat;
     clientData[clientData.length-1].longitude = geonamesData.lng;
     clientData[clientData.length-1].country = geonamesData.countryName;
-    // projectData[projectData.length-1].latitude = geonamesData.lat;
-    // projectData[projectData.length-1].longitude = geonamesData.lng;
-    // projectData[projectData.length-1].country = geonamesData.countryName;
     console.log ('Just got the coordinates from GeoNames');
     // return geonamesData
   } catch(error){
@@ -84,15 +86,50 @@ const getCoordinates = async () => {
 
 //Write an async function that uses fetch() to make a GET request to the Weatherbit API
 const weatherbit = async () => {
-  const weatherRequest = `${weatherbitURL}lat=${clientData[clientData.length-1].latitude}&lon=${clientData[clientData.length-1].longitude}&key=${weatherbitKey}`;
-  // const weatherRequest = `${weatherbitURL}lat=${projectData[projectData.length-1].latitude}&lon=${projectData[projectData.length-1].longitude}&key=${weatherbitKey}`;
+  let weatherRequest;
+  if (clientData[clientData.length-1].daysLeft < 17){
+    weatherRequest = `${weatherbitURL}lat=${clientData[clientData.length-1].latitude}&lon=${clientData[clientData.length-1].longitude}&key=${weatherbitKey}`;
+  } else {
+    //Setting the dates for the weatherRequest - arrival day and the day after and subtracting one year to get historical data
+    const arrivalInputDate = clientData[clientData.length-1].arrival;
+    const arrivalDay = new Date (arrivalInputDate);
+    let arrivalPastYear = arrivalDay.getFullYear() - 1;
+    arrivalDay.setFullYear(arrivalPastYear);
+    console.log(arrivalDay);
+
+    let arrivalM = arrivalDay.getMonth();
+    let arrivalMonth = arrivalM+1;
+    let startDate = arrivalDay.getFullYear()+'-0'+arrivalMonth+'-'+arrivalDay.getDate();
+    console.log(startDate);
+
+    Date.prototype.addDays = function(d) {  
+    this.setTime(this.getTime() + (d*24*60*60*1000));  
+    return this;  
+    }; 
+                  
+    const endDate = function run() { 
+    var a = arrivalDay; 
+    arrivalDay.addDays(1); 
+    return a;
+    };
+    
+    const final = new Date(endDate());
+    let m = final.getMonth();
+    let month = m+1;
+    let nextDate = final.getFullYear()+'-0'+month+'-'+final.getDate();
+    console.log(nextDate);
+
+    //Getting the weatherRequest URL with historical data for last year using the above date values
+    weatherRequest = `${weatherbitURLhist}lat=${clientData[clientData.length-1].latitude}&lon=${clientData[clientData.length-1].longitude}&start_date=${startDate}&end_date=${nextDate}&key=${weatherbitKey}`;
+    console.log(weatherRequest);
+  };
+
   const response = await fetch(weatherRequest);
     try{
       const weatherObject = await response.json();
       console.log(JSON.stringify(weatherObject));
       clientData[clientData.length-1].temp = weatherObject.data[0].temp;
-      // projectData[projectData.length-1].temp = weatherObject.data[0].temp;
-      console.log ('Got the temp from Weatherbit');
+      console.log (`Weatherbit data`);
       return weatherObject
     } catch(error){
       console.log('error', error);
@@ -107,9 +144,10 @@ async function addTripData(req, res){
   const newTravelData = {};
   newTravelData.date = req.body.date;
   newTravelData.city = req.body.city;
+  newTravelData.daysLeft = req.body.daysLeft;
+  newTravelData.arrival = req.body.arrival;
 
   clientData.push(newTravelData);
-  // projectData.push(newTravelData);
   console.log ('newTravelData added to clientData');
 
   await getCoordinates();
