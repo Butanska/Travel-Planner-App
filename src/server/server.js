@@ -136,6 +136,22 @@ const weatherbit = async () => {
     }
 };
 
+
+//Write an async function that uses fetch() to make a GET request to the Pixabay API
+const getPixabay = async () => {
+  let city = clientData[clientData.length-1].city;
+  pixabayReq = `${pixabayURL}key=${pixabay_API_KEY}&q=${city}&image_type=photo&pretty=true`;
+  const response = await fetch(pixabayReq);
+  try{
+    const pixabayArray = await response.json();
+    console.log(pixabayArray);
+    clientData[clientData.length-1].image = pixabayArray.hits[0].webformatURL;
+    console.log ('Just got the image from Pixabay');
+  } catch(error){
+    console.log('error', error);
+  }
+};
+
 //Adding a POST route that adds incoming data to projectData
 app.post('/add', addTripData);
 
@@ -154,11 +170,14 @@ async function addTripData(req, res){
 
   await weatherbit();
 
+  await getPixabay();
+
   const dates = {};
   dates.arrival = req.body.arrival;
   dates.daysLeft = req.body.daysLeft;
   dates.country = clientData[clientData.length-1].country;
   dates.temp = clientData[clientData.length-1].temp;
+  dates.image = clientData[clientData.length-1].image;
 
   projectData.push(dates);
 

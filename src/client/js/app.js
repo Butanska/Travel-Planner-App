@@ -80,6 +80,8 @@ function formSubmit(){
       document.getElementById('countdown').innerHTML = 'There are '+lastEntry.daysLeft+' days left until your trip';
 
       document.getElementById('temp').innerHTML = 'The typical weather for then is '+lastEntry.temp+'&deg;C';
+      
+      document.getElementById('picture').innerHTML = '<img src='+lastEntry.image+'>';
     }
     catch(error){
       console.log('error', error);
