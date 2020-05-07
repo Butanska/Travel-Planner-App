@@ -5,7 +5,7 @@ const fetch = require("node-fetch");
 // Setup empty JS object to act as endpoint for all routes
 projectData = [];
 
-// Setup empty JS object to act as endpoint for part of the routes
+// Setup empty JS object to act as endpoint for the /client route
 clientData = [];
 
 var path = require('path')
@@ -50,7 +50,6 @@ app.get('/client', getClientData);
 
 function getClientData (req,res) {
   res.send(clientData);
-  // console.log(clientData)
 };
 
 //GeoNames API
@@ -66,7 +65,6 @@ const weatherbitKey = process.env.WEATHERBIT_API_KEY;
 const pixabayURL = 'https://pixabay.com/api/?'
 const pixabay_API_KEY = process.env.pixabay_API_KEY;
 
-
 //Write an async function that uses fetch() to make a GET request to the Geonames API
 const getCoordinates = async () => {
   let city = clientData[clientData.length-1].city;
@@ -78,7 +76,6 @@ const getCoordinates = async () => {
     clientData[clientData.length-1].longitude = geonamesData.lng;
     clientData[clientData.length-1].country = geonamesData.countryName;
     console.log ('Just got the coordinates from GeoNames');
-    // return geonamesData
   } catch(error){
     console.log('error', error);
   }
@@ -140,7 +137,8 @@ const weatherbit = async () => {
 //Write an async function that uses fetch() to make a GET request to the Pixabay API
 const getPixabay = async () => {
   let city = clientData[clientData.length-1].city;
-  pixabayReq = `${pixabayURL}key=${pixabay_API_KEY}&q=${city}&image_type=photo&pretty=true`;
+  let country = clientData[clientData.length-1].country; 
+  pixabayReq = `${pixabayURL}key=${pixabay_API_KEY}&q=${city}+${country}&image_type=photo&pretty=true`;
   const response = await fetch(pixabayReq);
   try{
     const pixabayArray = await response.json();
@@ -151,6 +149,23 @@ const getPixabay = async () => {
     console.log('error', error);
   }
 };
+
+//Alternative async function that uses fetch() to make a GET request to the Pixabay API for country
+const getPixabayCountry = async () => {
+  let country = clientData[clientData.length-1].country;
+  pixabayReq = `${pixabayURL}key=${pixabay_API_KEY}&q=${country}&image_type=photo&pretty=true`;
+  const response = await fetch(pixabayReq);
+  try{
+    const pixabayArray = await response.json();
+    console.log(pixabayArray);
+    clientData[clientData.length-1].countryImage = pixabayArray.hits[0].webformatURL;
+    console.log ('Just got the country image from Pixabay');
+  } catch(error){
+    console.log('error', error);
+  }
+};
+
+
 
 //Adding a POST route that adds incoming data to projectData
 app.post('/add', addTripData);
@@ -172,12 +187,15 @@ async function addTripData(req, res){
 
   await getPixabay();
 
+  await getPixabayCountry();
+
   const dates = {};
   dates.arrival = req.body.arrival;
   dates.daysLeft = req.body.daysLeft;
   dates.country = clientData[clientData.length-1].country;
   dates.temp = clientData[clientData.length-1].temp;
   dates.image = clientData[clientData.length-1].image;
+  dates.countryImage = clientData[clientData.length-1].countryImage;
 
   projectData.push(dates);
 
@@ -191,7 +209,6 @@ app.get('/all', getProjectData);
 
 function getProjectData (req,res) {
   res.send(projectData);
-  // console.log(projectData)
 };
 
 

@@ -1,8 +1,6 @@
-import {formSubmit} from './js/app'
+import {formSubmit} from './js/app.js'
 import './styles/style.scss'
 
 window.addEventListener('DOMContentLoaded', formSubmit);
-
-alert('I exist!')
 
 export {formSubmit}

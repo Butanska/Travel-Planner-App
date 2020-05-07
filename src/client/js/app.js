@@ -70,18 +70,20 @@ function formSubmit(){
       const lastEntry = allData[logsNumber-1];
       const city = document.getElementById('city').value;
 
-      document.getElementById('date').innerHTML = 'Today is '+ newDate;
-      // lastEntry.date;
-
       document.getElementById('country').innerHTML = 'You are going to '+city+', '+lastEntry.country;
 
       document.getElementById('content').innerHTML = 'Your arrival date is '+lastEntry.arrival;
 
       document.getElementById('countdown').innerHTML = 'There are '+lastEntry.daysLeft+' days left until your trip';
 
-      document.getElementById('temp').innerHTML = 'The typical weather for then is '+lastEntry.temp+'&deg;C';
-      
-      document.getElementById('picture').innerHTML = '<img src='+lastEntry.image+'>';
+      document.getElementById('temp').innerHTML = 'The expected weather for then is '+lastEntry.temp+'&deg;C';
+      //Add country image if image of city is not available
+      if (lastEntry.image !== undefined ){
+        document.getElementById('picture').innerHTML = '<img src='+lastEntry.image+'>';
+      } else {
+        document.getElementById('picture').innerHTML = '<img src='+lastEntry.countryImage+'>';
+      }
+
     }
     catch(error){
       console.log('error', error);
