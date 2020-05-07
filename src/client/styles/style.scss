@@ -11,6 +11,10 @@ body{
     // background: #e3c4d7;
 }
 
+ul {
+    list-style: none;
+  }
+
 #app{
     // height:100vh;
     color: #313446;
@@ -20,13 +24,14 @@ body{
 }
 
 #user{
-    height: 80vh;
+    // height: 80vh;
     background: url('../media/travel_large.jpg') no-repeat center center/cover;
     z-index: 1;
     color: #fff;
 }
 
 #responseHolder {
+    display: block;
     color: #313446;
     background: #fff;
     padding: 2rem;

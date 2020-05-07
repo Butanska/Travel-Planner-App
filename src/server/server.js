@@ -3,12 +3,12 @@ dotenv.config();
 const fetch = require("node-fetch");
 
 // Setup empty JS object to act as endpoint for all routes
-projectData = [];
+const projectData = [];
 
 // Setup empty JS object to act as endpoint for the /client route
-clientData = [];
+const clientData = [];
 
-var path = require('path')
+const path = require('path')
 
 // Require Express to run server and routes
 const express = require ('express');
@@ -211,4 +211,5 @@ function getProjectData (req,res) {
   res.send(projectData);
 };
 
+module.exports = server;
 
