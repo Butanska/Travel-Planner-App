@@ -34,8 +34,6 @@ module.exports = {
         new HtmlWebPackPlugin({
             template: "./src/client/views/index.html",
             filename: "./index.html",
-            //added the following to avoid the bundle(dist) loading twice
-            // inject: false
         }),
         new MiniCSSExtractPlugin({
             filename: "[name].css",
